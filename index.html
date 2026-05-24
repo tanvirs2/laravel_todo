@@ -1,0 +1,1674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aquarium Vibe — Slow water, kept well.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* Aquarium Vibe — serene premium underwater commerce */
+
+:root {
+  --abyss: #030814;
+  --deep: #061226;
+  --night: #0a1a36;
+  --ocean: #102a52;
+  --tide: #1d4078;
+  --current: #356fb3;
+  --shallow: #6ba7d6;
+  --foam: #b8d6e8;
+  --pearl: #e8f0f5;
+  --ivory: #f6f1e4;
+  --sand: #d8c9a3;
+  --coral: #e9a373;
+  --rust: #c8623d;
+  --kelp: #2e6b5f;
+
+  --serif: "Cormorant Garamond", "Times New Roman", serif;
+  --sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--abyss);
+  color: var(--pearl);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* ─── Underwater background ─── */
+.ocean-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(53,111,179,.35) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 60% at 20% 30%, rgba(29,64,120,.4) 0%, transparent 50%),
+    radial-gradient(ellipse 90% 70% at 80% 60%, rgba(16,42,82,.5) 0%, transparent 55%),
+    linear-gradient(180deg, var(--deep) 0%, var(--abyss) 100%);
+}
+
+.caustics {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: .12; mix-blend-mode: screen;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(180,220,255,.6) 0%, transparent 8%),
+    radial-gradient(circle at 70% 20%, rgba(180,220,255,.5) 0%, transparent 6%),
+    radial-gradient(circle at 40% 70%, rgba(180,220,255,.5) 0%, transparent 7%),
+    radial-gradient(circle at 85% 80%, rgba(180,220,255,.6) 0%, transparent 9%),
+    radial-gradient(circle at 10% 90%, rgba(180,220,255,.4) 0%, transparent 5%);
+  animation: caustic-drift 20s ease-in-out infinite;
+}
+@keyframes caustic-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(2%, -3%) scale(1.05); }
+}
+
+.grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .08; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>");
+}
+
+.bubbles { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.bubble {
+  position: absolute; bottom: -40px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.6), rgba(184,214,232,.18) 50%, transparent 70%);
+  box-shadow: inset 0 0 0 .5px rgba(255,255,255,.25);
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  10%  { opacity: .8; }
+  90%  { opacity: .6; }
+  100% { transform: translate(var(--drift,30px), -110vh); opacity: 0; }
+}
+
+/* ─── Layout primitives ─── */
+.page { position: relative; z-index: 2; }
+.container { max-width: 1440px; margin: 0 auto; padding: 0 48px; }
+
+/* ─── Nav ─── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  padding: 22px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  background: linear-gradient(180deg, rgba(3,8,20,.5), rgba(3,8,20,.15));
+  border-bottom: .5px solid rgba(184,214,232,.08);
+}
+.brand {
+  display: flex; align-items: baseline; gap: 10px;
+  font-family: var(--serif); font-weight: 500; font-size: 26px;
+  letter-spacing: .01em; font-style: italic;
+}
+.brand .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); display: inline-block; }
+.brand small {
+  font-family: var(--sans); font-size: 9px; font-weight: 600;
+  font-style: normal; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--shallow); opacity: .7;
+}
+.nav-links { display: flex; gap: 36px; font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.nav-links a { opacity: .8; transition: opacity .2s; }
+.nav-links a:hover { opacity: 1; color: var(--foam); }
+.nav-tools { display: flex; align-items: center; gap: 24px; font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+.cart-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px;
+  border: .5px solid rgba(184,214,232,.2);
+  transition: all .2s var(--ease);
+}
+.cart-btn:hover { border-color: var(--coral); background: rgba(233,163,115,.08); }
+.cart-count {
+  background: var(--coral); color: var(--abyss);
+  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px;
+  letter-spacing: 0;
+}
+
+/* ─── Hero ─── */
+.hero {
+  min-height: 92vh;
+  padding: 80px 48px 120px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  max-width: 1440px; margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 11px; font-weight: 600; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--shallow);
+  margin-bottom: 28px;
+}
+.hero-eyebrow::before { content: ""; width: 36px; height: 1px; background: var(--shallow); opacity: .5; }
+.hero h1 {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(56px, 8vw, 124px);
+  line-height: .92; letter-spacing: -.02em;
+  color: var(--ivory);
+}
+.hero h1 em { font-style: italic; color: var(--coral); font-weight: 400; }
+.hero h1 .thin { font-weight: 300; opacity: .85; }
+.hero-sub {
+  margin-top: 36px; max-width: 480px;
+  font-size: 17px; line-height: 1.6; color: var(--foam); opacity: .85;
+}
+.hero-cta-row { margin-top: 44px; display: flex; align-items: center; gap: 20px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 28px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  transition: all .25s var(--ease);
+  position: relative; overflow: hidden;
+}
+.btn-primary { background: var(--ivory); color: var(--abyss); }
+.btn-primary:hover { background: var(--coral); color: var(--abyss); transform: translateY(-1px); }
+.btn-ghost { border: .5px solid rgba(184,214,232,.3); color: var(--pearl); }
+.btn-ghost:hover { border-color: var(--coral); color: var(--coral); }
+.btn .arrow { transition: transform .25s var(--ease); }
+.btn:hover .arrow { transform: translateX(4px); }
+
+.hero-stats {
+  margin-top: 80px;
+  display: flex; gap: 56px;
+  border-top: .5px solid rgba(184,214,232,.12);
+  padding-top: 28px;
+}
+.stat .num { font-family: var(--serif); font-size: 36px; font-weight: 400; color: var(--ivory); }
+.stat .lbl { font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--shallow); opacity: .75; margin-top: 4px; }
+
+/* Hero visual — animated tank scene */
+.hero-tank {
+  position: relative; aspect-ratio: 3 / 4;
+  border-radius: 4px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(53,111,179,.3) 0%, rgba(10,26,54,.85) 100%);
+  border: .5px solid rgba(184,214,232,.18);
+  box-shadow:
+    inset 0 0 60px rgba(53,111,179,.3),
+    inset 0 -40px 80px rgba(216,201,163,.08),
+    0 30px 80px rgba(0,0,0,.5);
+}
+.hero-tank::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, transparent 40%);
+  pointer-events: none;
+}
+.hero-tank-tag {
+  position: absolute; top: 24px; left: 24px; z-index: 3;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--foam);
+}
+.hero-tank-tag .pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--coral);
+  box-shadow: 0 0 0 0 rgba(233,163,115,.6);
+  animation: pulse 2s ease-out infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(233,163,115,.6); }
+  100% { box-shadow: 0 0 0 14px rgba(233,163,115,0); }
+}
+.hero-tank-price {
+  position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 3;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.hero-tank-price .name { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--ivory); }
+.hero-tank-price .meta { font-size: 11px; color: var(--shallow); letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+.hero-tank-price .price { font-family: var(--serif); font-size: 34px; color: var(--coral); font-weight: 400; }
+
+/* Fish & plants inside hero tank */
+.tank-sand {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 14%;
+  background: linear-gradient(180deg, rgba(216,201,163,.0), rgba(216,201,163,.35) 50%, rgba(168,148,98,.55));
+  border-radius: 50% 50% 0 0 / 80% 80% 0 0;
+}
+.plant {
+  position: absolute; bottom: 8%; transform-origin: bottom center;
+  animation: sway 6s ease-in-out infinite;
+}
+.plant-1 { left: 12%; width: 32px; height: 38%; animation-duration: 7s; }
+.plant-2 { right: 18%; width: 26px; height: 28%; animation-duration: 8s; animation-delay: -2s; }
+.plant-3 { left: 60%; width: 22px; height: 22%; animation-duration: 9s; animation-delay: -1s; }
+@keyframes sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+.plant svg { width: 100%; height: 100%; }
+
+.fish {
+  position: absolute; pointer-events: none;
+}
+.fish-a { top: 30%; left: 0; width: 60px; animation: swim-a 22s linear infinite; }
+.fish-b { top: 55%; right: 0; width: 44px; animation: swim-b 28s linear infinite; animation-delay: -8s; }
+.fish-c { top: 18%; left: 0; width: 36px; animation: swim-a 35s linear infinite; animation-delay: -14s; }
+@keyframes swim-a {
+  0%   { transform: translateX(-20%) translateY(0); }
+  45%  { transform: translateX(380%) translateY(-8px); }
+  50%  { transform: translateX(380%) translateY(-8px) scaleX(-1); }
+  95%  { transform: translateX(-20%) translateY(6px) scaleX(-1); }
+  100% { transform: translateX(-20%) translateY(0); }
+}
+@keyframes swim-b {
+  0%   { transform: translateX(20%) translateY(0) scaleX(-1); }
+  45%  { transform: translateX(-420%) translateY(10px) scaleX(-1); }
+  50%  { transform: translateX(-420%) translateY(10px); }
+  95%  { transform: translateX(20%) translateY(-4px); }
+  100% { transform: translateX(20%) translateY(0) scaleX(-1); }
+}
+
+/* ─── Marquee ticker ─── */
+.ticker {
+  border-top: .5px solid rgba(184,214,232,.12);
+  border-bottom: .5px solid rgba(184,214,232,.12);
+  overflow: hidden;
+  padding: 18px 0;
+  font-family: var(--serif); font-style: italic;
+  font-size: 22px; color: var(--foam);
+}
+.ticker-track { display: flex; gap: 60px; white-space: nowrap; animation: ticker 40s linear infinite; }
+.ticker-track span { display: inline-flex; align-items: center; gap: 60px; }
+.ticker-track .sep { color: var(--coral); }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── Section heading ─── */
+.section { padding: 120px 48px; max-width: 1440px; margin: 0 auto; position: relative; }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 64px; gap: 40px; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--shallow); display: flex; align-items: center; gap: 12px;
+}
+.section-eyebrow::before { content: ""; width: 36px; height: 1px; background: var(--shallow); opacity: .5; }
+.section-head h2 {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(40px, 5vw, 72px); line-height: 1; letter-spacing: -.015em;
+  color: var(--ivory); margin-top: 14px;
+}
+.section-head h2 em { font-style: italic; color: var(--coral); font-weight: 400; }
+.section-head .desc { max-width: 380px; font-size: 15px; color: var(--foam); opacity: .8; line-height: 1.6; }
+
+/* ─── Category grid ─── */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+}
+.cat-card {
+  position: relative; aspect-ratio: 3 / 4;
+  border-radius: 2px; overflow: hidden;
+  border: .5px solid rgba(184,214,232,.12);
+  background: linear-gradient(180deg, rgba(29,64,120,.3), rgba(6,18,38,.6));
+  cursor: pointer; transition: all .35s var(--ease);
+}
+.cat-card:hover { transform: translateY(-4px); border-color: rgba(233,163,115,.4); }
+.cat-card-glyph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: .35; transition: opacity .35s var(--ease);
+}
+.cat-card:hover .cat-card-glyph { opacity: .7; }
+.cat-card-glyph svg { width: 64%; height: 64%; color: var(--shallow); }
+.cat-card-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 16px;
+  background: linear-gradient(180deg, transparent, rgba(3,8,20,.7));
+}
+.cat-card-num {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .15em; color: var(--coral);
+}
+.cat-card-name {
+  font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ivory); margin-top: 4px;
+}
+.cat-card-meta { font-size: 11px; color: var(--shallow); margin-top: 2px; opacity: .8; }
+
+/* ─── Featured products ─── */
+.products {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+}
+.product {
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.product-img {
+  position: relative; aspect-ratio: 4 / 5;
+  border-radius: 2px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(53,111,179,.18), rgba(10,26,54,.6));
+  border: .5px solid rgba(184,214,232,.1);
+  margin-bottom: 16px;
+  transition: all .3s var(--ease);
+}
+.product-img::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.05) 0%, transparent 30%);
+  pointer-events: none;
+}
+.product:hover .product-img { border-color: rgba(233,163,115,.3); }
+.product-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--coral); color: var(--abyss);
+  z-index: 2;
+}
+.product-badge.live { background: var(--kelp); color: var(--ivory); }
+.product-badge.new { background: var(--ivory); color: var(--abyss); }
+.product-glyph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: .5;
+}
+.product-glyph svg { width: 70%; height: 70%; color: var(--foam); }
+.product-add {
+  position: absolute; bottom: 12px; right: 12px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--ivory); color: var(--abyss);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(8px);
+  transition: all .25s var(--ease);
+  z-index: 3;
+}
+.product:hover .product-add { opacity: 1; transform: translateY(0); }
+.product-add:hover { background: var(--coral); transform: scale(1.06); }
+.product-add.added { background: var(--kelp); color: var(--ivory); opacity: 1; transform: translateY(0); }
+
+.product-info { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.product-name { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ivory); line-height: 1.1; }
+.product-meta { font-size: 12px; color: var(--shallow); margin-top: 4px; letter-spacing: .04em; }
+.product-price { font-family: var(--serif); font-size: 22px; color: var(--coral); white-space: nowrap; }
+
+/* ─── Filter chips ─── */
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip {
+  padding: 9px 18px; border-radius: 999px;
+  border: .5px solid rgba(184,214,232,.2);
+  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--foam); transition: all .2s var(--ease);
+}
+.chip:hover { border-color: var(--shallow); color: var(--ivory); }
+.chip.active { background: var(--ivory); color: var(--abyss); border-color: var(--ivory); }
+
+/* ─── Setup bundle cards ─── */
+.bundles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.bundle {
+  position: relative;
+  border: .5px solid rgba(184,214,232,.15);
+  background: linear-gradient(180deg, rgba(29,64,120,.18), rgba(6,18,38,.4));
+  padding: 36px 32px 32px;
+  border-radius: 2px;
+  display: flex; flex-direction: column;
+  min-height: 460px;
+  transition: all .3s var(--ease);
+}
+.bundle:hover { border-color: rgba(233,163,115,.35); transform: translateY(-3px); }
+.bundle.featured { border-color: var(--coral); background: linear-gradient(180deg, rgba(233,163,115,.08), rgba(6,18,38,.4)); }
+.bundle-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; color: var(--coral); margin-bottom: 12px; }
+.bundle-name { font-family: var(--serif); font-size: 36px; font-weight: 400; color: var(--ivory); line-height: 1; }
+.bundle-name em { font-style: italic; }
+.bundle-tagline { font-size: 14px; color: var(--foam); opacity: .85; margin-top: 12px; line-height: 1.5; }
+.bundle-inc { margin-top: 24px; padding-top: 20px; border-top: .5px solid rgba(184,214,232,.1); display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.bundle-inc li {
+  list-style: none; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--foam);
+}
+.bundle-inc li::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--coral); flex-shrink: 0;
+}
+.bundle-foot { display: flex; align-items: baseline; justify-content: space-between; margin-top: 24px; padding-top: 20px; border-top: .5px solid rgba(184,214,232,.1); }
+.bundle-foot .price { font-family: var(--serif); font-size: 32px; color: var(--ivory); }
+.bundle-foot .price small { font-family: var(--sans); font-size: 11px; color: var(--shallow); letter-spacing: .1em; text-transform: uppercase; margin-left: 4px; }
+
+/* ─── Care strip ─── */
+.care-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+  border-top: .5px solid rgba(184,214,232,.12);
+  border-bottom: .5px solid rgba(184,214,232,.12);
+}
+.care-strip > div {
+  padding: 36px 28px;
+  border-right: .5px solid rgba(184,214,232,.12);
+}
+.care-strip > div:last-child { border-right: none; }
+.care-strip .num { font-family: var(--mono); font-size: 11px; color: var(--coral); letter-spacing: .15em; }
+.care-strip .ttl { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ivory); margin-top: 10px; }
+.care-strip .sub { font-size: 13px; color: var(--foam); opacity: .8; margin-top: 8px; line-height: 1.5; }
+
+/* ─── Newsletter ─── */
+.newsletter {
+  padding: 140px 48px;
+  text-align: center;
+  max-width: 760px; margin: 0 auto;
+}
+.newsletter h2 {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(40px, 5vw, 64px); line-height: 1; letter-spacing: -.01em;
+  color: var(--ivory);
+}
+.newsletter h2 em { font-style: italic; color: var(--coral); font-weight: 400; }
+.newsletter p { margin-top: 20px; color: var(--foam); opacity: .85; font-size: 16px; }
+.news-form {
+  margin-top: 36px;
+  display: flex; gap: 8px;
+  background: rgba(184,214,232,.06);
+  border: .5px solid rgba(184,214,232,.18);
+  border-radius: 999px;
+  padding: 6px 6px 6px 24px;
+  max-width: 480px; margin-left: auto; margin-right: auto;
+}
+.news-form input {
+  flex: 1; background: transparent; border: 0; outline: none;
+  font: inherit; color: var(--ivory);
+}
+.news-form input::placeholder { color: var(--shallow); opacity: .7; }
+.news-form button {
+  padding: 12px 22px; border-radius: 999px;
+  background: var(--ivory); color: var(--abyss);
+  font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  transition: all .2s;
+}
+.news-form button:hover { background: var(--coral); }
+
+/* ─── Footer ─── */
+.foot {
+  padding: 80px 48px 40px;
+  border-top: .5px solid rgba(184,214,232,.1);
+  max-width: 1440px; margin: 0 auto;
+}
+.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.foot-grid h4 { font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--shallow); margin-bottom: 18px; }
+.foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.foot-grid a { font-size: 14px; color: var(--foam); opacity: .8; transition: all .2s; }
+.foot-grid a:hover { color: var(--coral); opacity: 1; }
+.foot-tag { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--ivory); line-height: 1.2; }
+.foot-tag .dot { color: var(--coral); }
+.foot-meta { display: flex; justify-content: space-between; padding-top: 28px; border-top: .5px solid rgba(184,214,232,.08); font-size: 12px; color: var(--shallow); opacity: .7; }
+
+/* ─── Cart drawer ─── */
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 99;
+  background: rgba(3,8,20,.7); backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transition: opacity .3s var(--ease);
+}
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 460px; z-index: 100;
+  background: linear-gradient(180deg, var(--deep), var(--abyss));
+  border-left: .5px solid rgba(184,214,232,.15);
+  transform: translateX(100%); transition: transform .35s var(--ease);
+  display: flex; flex-direction: column;
+}
+.cart-drawer.open { transform: translateX(0); }
+.cart-hd { padding: 26px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: .5px solid rgba(184,214,232,.1); }
+.cart-hd h3 { font-family: var(--serif); font-size: 26px; font-weight: 400; color: var(--ivory); }
+.cart-hd h3 small { font-size: 13px; color: var(--shallow); margin-left: 8px; letter-spacing: .1em; }
+.cart-close { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background .2s; }
+.cart-close:hover { background: rgba(184,214,232,.08); }
+.cart-body { flex: 1; overflow-y: auto; padding: 12px 28px; }
+.cart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; text-align: center; padding: 40px 20px; color: var(--shallow); }
+.cart-empty h4 { font-family: var(--serif); font-size: 24px; color: var(--ivory); font-weight: 400; }
+.cart-empty p { font-size: 14px; max-width: 280px; line-height: 1.5; opacity: .8; }
+
+.cart-item {
+  display: grid; grid-template-columns: 80px 1fr auto; gap: 16px;
+  padding: 20px 0; border-bottom: .5px solid rgba(184,214,232,.08);
+}
+.cart-item-img {
+  width: 80px; height: 96px; border-radius: 2px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(53,111,179,.2), rgba(10,26,54,.5));
+  border: .5px solid rgba(184,214,232,.12);
+  display: flex; align-items: center; justify-content: center;
+}
+.cart-item-img svg { width: 60%; height: 60%; color: var(--foam); opacity: .6; }
+.cart-item-name { font-family: var(--serif); font-size: 18px; color: var(--ivory); line-height: 1.15; }
+.cart-item-meta { font-size: 11px; color: var(--shallow); margin-top: 4px; letter-spacing: .05em; }
+.cart-item-qty { display: inline-flex; align-items: center; gap: 0; margin-top: 12px; border: .5px solid rgba(184,214,232,.18); border-radius: 999px; overflow: hidden; }
+.cart-item-qty button { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+.cart-item-qty button:hover { background: rgba(184,214,232,.1); }
+.cart-item-qty span { min-width: 24px; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums; }
+.cart-item-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+.cart-item-price { font-family: var(--serif); font-size: 18px; color: var(--coral); }
+.cart-item-remove { font-size: 11px; color: var(--shallow); letter-spacing: .1em; text-transform: uppercase; transition: color .15s; }
+.cart-item-remove:hover { color: var(--rust); }
+
+.cart-foot { padding: 22px 28px 28px; border-top: .5px solid rgba(184,214,232,.12); background: rgba(3,8,20,.4); }
+.cart-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; color: var(--foam); }
+.cart-row.tot { font-family: var(--serif); font-size: 26px; color: var(--ivory); padding-top: 14px; margin-top: 8px; border-top: .5px solid rgba(184,214,232,.1); }
+.cart-row.tot .price { color: var(--coral); }
+.cart-checkout {
+  width: 100%; padding: 18px;
+  background: var(--ivory); color: var(--abyss);
+  border-radius: 999px; margin-top: 18px;
+  font-size: 13px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  transition: all .2s var(--ease);
+}
+.cart-checkout:hover { background: var(--coral); }
+.cart-secure { text-align: center; font-size: 11px; color: var(--shallow); margin-top: 12px; letter-spacing: .1em; opacity: .7; }
+
+/* ─── Checkout overlay ─── */
+.checkout-veil {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(3,8,20,.96); backdrop-filter: blur(14px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .3s var(--ease);
+  overflow-y: auto;
+}
+.checkout-veil.open { opacity: 1; pointer-events: auto; }
+.checkout-card {
+  width: 100%; max-width: 880px; margin: 60px auto;
+  background: var(--deep);
+  border: .5px solid rgba(184,214,232,.15);
+  border-radius: 4px;
+  padding: 48px 56px;
+  position: relative;
+}
+.checkout-close { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: .5px solid rgba(184,214,232,.18); }
+.checkout-close:hover { background: rgba(184,214,232,.08); }
+.checkout-steps { display: flex; gap: 28px; margin-bottom: 36px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--shallow); }
+.checkout-steps span { opacity: .5; }
+.checkout-steps span.active { color: var(--coral); opacity: 1; }
+.checkout-steps span.done { color: var(--foam); opacity: .9; }
+.checkout-card h3 { font-family: var(--serif); font-size: 44px; font-weight: 300; color: var(--ivory); line-height: 1; margin-bottom: 8px; letter-spacing: -.01em; }
+.checkout-card h3 em { font-style: italic; color: var(--coral); }
+.checkout-card .lead { color: var(--foam); opacity: .85; margin-bottom: 32px; }
+.checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--shallow); }
+.field input {
+  background: rgba(184,214,232,.06);
+  border: .5px solid rgba(184,214,232,.15);
+  border-radius: 2px;
+  padding: 14px 16px;
+  font: inherit; font-size: 15px; color: var(--ivory);
+  outline: none; transition: border .2s;
+}
+.field input:focus { border-color: var(--coral); }
+.field input::placeholder { color: var(--shallow); opacity: .5; }
+.checkout-cta { margin-top: 28px; display: flex; align-items: center; gap: 16px; }
+.checkout-summary {
+  margin-top: 32px; padding-top: 24px;
+  border-top: .5px solid rgba(184,214,232,.1);
+  display: flex; justify-content: space-between; font-family: var(--serif); font-size: 22px; color: var(--ivory);
+}
+.checkout-summary .price { color: var(--coral); }
+
+.confirm-icn {
+  width: 80px; height: 80px; border-radius: 50%;
+  margin: 0 auto 28px;
+  background: radial-gradient(circle, rgba(233,163,115,.25), transparent 70%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.confirm-icn::after {
+  content: ""; position: absolute; inset: -8px; border-radius: 50%;
+  border: .5px solid rgba(233,163,115,.4);
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(.9); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.confirm-icn svg { width: 40px; height: 40px; color: var(--coral); }
+
+/* ─── Live indicator ─── */
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--kelp);
+  box-shadow: 0 0 6px var(--kelp);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  z-index: 150;
+  padding: 14px 24px;
+  background: var(--ivory); color: var(--abyss);
+  border-radius: 999px;
+  font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+  opacity: 0; transition: all .3s var(--ease);
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast svg { width: 16px; height: 16px; color: var(--kelp); }
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr); }
+  .products { grid-template-columns: repeat(2, 1fr); }
+  .bundles { grid-template-columns: 1fr; }
+  .care-strip { grid-template-columns: repeat(2, 1fr); }
+  .care-strip > div:nth-child(2) { border-right: none; }
+}
+@media (max-width: 720px) {
+  .nav, .hero, .section, .newsletter, .foot { padding-left: 22px; padding-right: 22px; }
+  .nav-links { display: none; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .products { grid-template-columns: 1fr; }
+  .cart-drawer { width: 100%; }
+  .checkout-card { padding: 28px 22px; }
+  .checkout-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 28px; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- data.js -->
+<script>
+window.CATALOG = {
+  categories: [
+    { id: "tanks",     num: "01", name: "Glass Tanks",      meta: "12 sizes · rimless",      glyph: "tank"  },
+    { id: "setups",    num: "02", name: "Complete Setups",   meta: "Ready in a box",           glyph: "setup" },
+    { id: "plants",    num: "03", name: "Plants & Decor",    meta: "Tissue-cultured",          glyph: "plant" },
+    { id: "equipment", num: "04", name: "Equipment",         meta: "Filters · light · heat",  glyph: "gear"  },
+    { id: "food",      num: "05", name: "Food & Care",       meta: "Wholesome, daily",         glyph: "food"  },
+    { id: "fish",      num: "06", name: "Live Fish",         meta: "Quarantine-cleared",       glyph: "fish"  }
+  ],
+  bundles: [
+    {
+      id: "b-still", tag: "Bundle / 30L", name: "The Stillwater",
+      tagline: "A desk-side meditation. Everything a first tank needs, nothing it doesn't.",
+      includes: ["30L rimless cube tank","Whisper canister filter","Daylight LED bar","Substrate + 3 plants","Setup guide & 30-day care"],
+      price: 289, monthly: 24
+    },
+    {
+      id: "b-deep", tag: "Bundle / 90L", name: "The Deepwater",
+      tagline: "A living centerpiece for the living room. Aquascaped for slow evenings.",
+      includes: ["90L low-iron glass tank","External filter + UV sterilizer","Spectrum dimmable LED","Volcanic substrate + driftwood","8 aquatic plants","White-glove install in 12 cities"],
+      price: 1240, monthly: 103, featured: true
+    },
+    {
+      id: "b-reef", tag: "Bundle / 200L", name: "The Reefline",
+      tagline: "Marine-ready. A statement system for collectors who want every detail.",
+      includes: ["200L low-iron glass with sump","Protein skimmer + return pump","Reef-spec coral LED array","Live rock + aragonite substrate","Programmable wave-makers","Concierge onboarding"],
+      price: 3480, monthly: 290
+    }
+  ],
+  products: [
+    { id: "p1", name: "Hailstone 60",          cat: "tanks",     meta: '60L · 23.6" rimless',    price: 320, badge: "new",  glyph: "tank-wide"    },
+    { id: "p2", name: "Mistgrass Carpet",       cat: "plants",    meta: "Tissue-cultured pot",     price: 14,  badge: null,  glyph: "plant-carpet" },
+    { id: "p3", name: "Lantern LED Bar",        cat: "equipment", meta: "Daylight · dimmable",     price: 148, badge: null,  glyph: "led"          },
+    { id: "p4", name: "Ember Tetra",            cat: "fish",      meta: "Shoal of 8 · peaceful",   price: 56,  badge: "live",glyph: "fish-tetra"   },
+    { id: "p5", name: "Driftwood, Manzanita",   cat: "plants",    meta: 'Hand-picked · 12"',       price: 38,  badge: null,  glyph: "driftwood"    },
+    { id: "p6", name: "Whisper Canister 400",   cat: "equipment", meta: "400 L/h · silent",        price: 184, badge: null,  glyph: "filter"       },
+    { id: "p7", name: "Daily Flake, Wholegrain",cat: "food",      meta: "120g · 8 weeks",          price: 18,  badge: null,  glyph: "food-flake"   },
+    { id: "p8", name: "Pearl Gourami",          cat: "fish",      meta: "Pair · centerpiece",      price: 64,  badge: "live",glyph: "fish-gourami" }
+  ]
+};
+</script>
+
+<!-- tweaks-panel.jsx + glyphs.jsx + app.jsx — all compiled by Babel in-browser -->
+<script type="text/babel">
+// ─── tweaks-panel ───────────────────────────────────────────────────────────
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2}
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = { x: startRight - (ev.clientX - sx), y: startBottom - (ev.clientY - sy) };
+      clampToViewport();
+    };
+    const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+  if (!open) return (
+    <button onClick={() => setOpen(true)} style={{
+      position:'fixed', right:16, bottom:16, zIndex:2147483646,
+      padding:'8px 16px', borderRadius:999, background:'rgba(250,249,247,.78)',
+      color:'#29261b', font:'600 11.5px/1.4 ui-sans-serif,system-ui,sans-serif',
+      border:'.5px solid rgba(255,255,255,.6)', backdropFilter:'blur(24px)',
+      boxShadow:'0 4px 20px rgba(0,0,0,.2)', cursor:'pointer'
+    }}>Tweaks</button>
+  );
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" onMouseDown={(e) => e.stopPropagation()} onClick={() => setOpen(false)}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ label }) {
+  return <div className="twk-sect">{label}</div>;
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl"><span>{label}</span>{value != null && <span className="twk-val">{value}</span>}</div>
+      {children}
+    </div>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'} onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => { if (!trackRef.current) return; const v = segAt(ev.clientX); if (v !== valueRef.current) onChange(v); };
+    const up = () => { setDragging(false); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown} className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb" style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`, width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>{o.label}</button>)}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakColor({ label, value, options, onChange }) {
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio" aria-checked={on} data-on={on ? '1' : '0'}
+                    style={{ background: hero }} onClick={() => onChange(o)}>
+              {sup.length > 0 && <span>{sup.map((c, j) => <i key={j} style={{ background: c }} />)}</span>}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+// ─── glyphs ─────────────────────────────────────────────────────────────────
+const Glyph = ({ name, className }) => {
+  const s = { fill: "none", stroke: "currentColor", strokeWidth: 1, strokeLinecap: "round", strokeLinejoin: "round" };
+  switch (name) {
+    case "tank": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <rect x="14" y="22" width="72" height="56" rx="2" {...s} />
+        <path d="M14 64 Q35 60 50 64 T86 64" {...s} />
+        <ellipse cx="60" cy="50" rx="8" ry="4" {...s} />
+        <path d="M52 50 L46 47 L46 53 Z" {...s} />
+        <path d="M22 78 Q26 72 30 78 Q34 72 38 78" {...s} />
+        <circle cx="30" cy="34" r=".8" fill="currentColor" />
+        <circle cx="32" cy="40" r=".6" fill="currentColor" />
+      </svg>
+    );
+    case "tank-wide": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <rect x="8" y="30" width="84" height="42" rx="1.5" {...s} />
+        <path d="M8 60 Q30 56 50 60 T92 60" {...s} />
+        <path d="M30 72 Q35 64 40 72" {...s} />
+        <path d="M55 72 Q60 64 65 72" {...s} />
+        <ellipse cx="65" cy="46" rx="6" ry="3" {...s} />
+        <path d="M59 46 L55 44 L55 48 Z" {...s} />
+      </svg>
+    );
+    case "setup": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <rect x="16" y="20" width="68" height="50" rx="2" {...s} />
+        <rect x="20" y="74" width="60" height="8" rx="1" {...s} />
+        <path d="M30 28 L30 38" {...s} />
+        <path d="M70 28 L70 38" {...s} />
+        <path d="M20 62 Q35 58 50 62 T80 62" {...s} />
+        <circle cx="50" cy="46" r="5" {...s} />
+      </svg>
+    );
+    case "plant": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M50 84 Q42 60 38 40 Q42 50 50 56 Q58 50 62 40 Q58 60 50 84" {...s} />
+        <path d="M50 84 Q34 70 30 56" {...s} />
+        <path d="M50 84 Q66 70 70 56" {...s} />
+        <path d="M50 84 Q50 50 50 30" {...s} />
+      </svg>
+    );
+    case "plant-carpet": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M20 78 Q24 64 28 78 Q32 64 36 78 Q40 64 44 78 Q48 64 52 78 Q56 64 60 78 Q64 64 68 78 Q72 64 76 78 Q80 64 84 78" {...s} />
+        <path d="M14 86 L86 86" {...s} />
+      </svg>
+    );
+    case "driftwood": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M14 60 Q30 52 42 58 Q56 64 70 56 Q82 50 90 56" {...s} />
+        <path d="M30 56 L24 44" {...s} />
+        <path d="M50 60 L46 48" {...s} />
+        <path d="M68 56 L74 42" {...s} />
+      </svg>
+    );
+    case "gear": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <circle cx="50" cy="50" r="20" {...s} />
+        <circle cx="50" cy="50" r="6" {...s} />
+        <path d="M50 22 L50 30 M50 70 L50 78 M22 50 L30 50 M70 50 L78 50 M30 30 L36 36 M64 64 L70 70 M70 30 L64 36 M36 64 L30 70" {...s} />
+      </svg>
+    );
+    case "filter": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <rect x="34" y="20" width="32" height="60" rx="2" {...s} />
+        <path d="M34 32 L66 32 M34 50 L66 50 M34 68 L66 68" {...s} />
+        <path d="M50 80 L50 88" {...s} />
+        <path d="M40 88 L60 88" {...s} />
+      </svg>
+    );
+    case "led": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <rect x="14" y="30" width="72" height="8" rx="3" {...s} />
+        <path d="M22 38 L22 50 M34 38 L34 56 M46 38 L46 50 M58 38 L58 56 M70 38 L70 50 M78 38 L78 56" {...s} />
+        <path d="M40 76 Q50 70 60 76" {...s} opacity=".6"/>
+      </svg>
+    );
+    case "food": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M28 26 L72 26 L68 78 Q50 84 32 78 Z" {...s} />
+        <path d="M28 36 L72 36" {...s} />
+        <circle cx="42" cy="54" r="1" fill="currentColor"/>
+        <circle cx="54" cy="60" r="1" fill="currentColor"/>
+        <circle cx="48" cy="48" r="1" fill="currentColor"/>
+        <circle cx="58" cy="50" r="1" fill="currentColor"/>
+      </svg>
+    );
+    case "food-flake": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <circle cx="50" cy="50" r="32" {...s} />
+        <path d="M30 38 L34 36 M40 42 L44 38 M50 36 L54 40 M62 40 L60 44 M68 50 L64 52 M58 58 L56 62 M44 58 L42 62 M34 52 L38 56" {...s} />
+        <circle cx="50" cy="50" r="3" {...s} />
+      </svg>
+    );
+    case "fish": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M20 50 Q24 36 44 36 Q66 36 76 50 Q66 64 44 64 Q24 64 20 50 Z" {...s} />
+        <path d="M76 50 L88 38 L88 62 Z" {...s} />
+        <circle cx="34" cy="48" r="1.5" fill="currentColor" />
+        <path d="M50 50 Q56 46 60 50 Q56 54 50 50" {...s} />
+      </svg>
+    );
+    case "fish-tetra": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M14 50 Q20 38 40 38 Q60 38 70 50 Q60 62 40 62 Q20 62 14 50 Z" {...s} />
+        <path d="M70 50 L86 40 L86 60 Z" {...s} />
+        <path d="M30 50 L60 50" {...s} opacity=".5"/>
+        <circle cx="26" cy="48" r="1.4" fill="currentColor" />
+      </svg>
+    );
+    case "fish-gourami": return (
+      <svg viewBox="0 0 100 100" className={className}>
+        <path d="M18 50 Q22 32 50 32 Q72 32 80 50 Q72 68 50 68 Q22 68 18 50 Z" {...s} />
+        <path d="M50 32 Q52 22 56 24" {...s} />
+        <path d="M50 68 Q52 78 56 76" {...s} />
+        <path d="M80 50 L92 42 L92 58 Z" {...s} />
+        <circle cx="32" cy="46" r="1.6" fill="currentColor" />
+      </svg>
+    );
+    case "bag": return (
+      <svg viewBox="0 0 24 24" {...s}>
+        <path d="M6 8 L18 8 L19 20 L5 20 Z" />
+        <path d="M9 8 V6 a3 3 0 0 1 6 0 V8" />
+      </svg>
+    );
+    case "arrow": return (
+      <svg viewBox="0 0 24 24" {...s}>
+        <path d="M5 12 L19 12" />
+        <path d="M13 6 L19 12 L13 18" />
+      </svg>
+    );
+    case "check": return (
+      <svg viewBox="0 0 24 24" {...s} strokeWidth="2">
+        <path d="M5 13 L10 18 L19 8" />
+      </svg>
+    );
+    case "x": return (
+      <svg viewBox="0 0 24 24" {...s}>
+        <path d="M6 6 L18 18 M18 6 L6 18" />
+      </svg>
+    );
+    case "plus": return (
+      <svg viewBox="0 0 24 24" {...s} strokeWidth="1.5">
+        <path d="M12 5 V19 M5 12 H19" />
+      </svg>
+    );
+    case "minus": return (
+      <svg viewBox="0 0 24 24" {...s} strokeWidth="1.5">
+        <path d="M5 12 H19" />
+      </svg>
+    );
+    default: return null;
+  }
+};
+
+// ─── app.jsx ────────────────────────────────────────────────────────────────
+const { useState, useEffect, useMemo, useRef } = React;
+
+const TWEAK_DEFAULTS = {
+  "palette": ["#030814", "#e9a373", "#f6f1e4"],
+  "motion": "calm",
+  "density": "regular",
+  "tagline": "lent",
+  "showBubbles": true
+};
+
+const PALETTES = {
+  "030814": { abyss:"#030814", deep:"#061226", coral:"#e9a373", ivory:"#f6f1e4", current:"#356fb3", shallow:"#6ba7d6", foam:"#b8d6e8", pearl:"#e8f0f5" },
+  "0c1d18": { abyss:"#0c1d18", deep:"#13302a", coral:"#d8c2a0", ivory:"#efe8d6", current:"#5a8e72", shallow:"#8eb59c", foam:"#c8dccb", pearl:"#e0ebde" },
+  "1a0e1f": { abyss:"#1a0e1f", deep:"#2a1730", coral:"#e89bd4", ivory:"#f4e8ed", current:"#a774b8", shallow:"#c4a3d0", foam:"#d8c6dd", pearl:"#ebe1ef" },
+  "f4eee2": { abyss:"#f4eee2", deep:"#e8e0cf", coral:"#c66d3f", ivory:"#1a1410", current:"#2a4d6e", shallow:"#4a6b85", foam:"#3d5570", pearl:"#1a1410" }
+};
+
+const TAGLINES = {
+  "lent":  { eyebrow:"Aquatic objects · est. 2019", h1a:"Slow",  h1b:"water,", h1c:"kept",  h1d:"well."     },
+  "drift": { eyebrow:"Living glass for slow rooms",  h1a:"A room",h1b:"with",   h1c:"a",     h1d:"current."  },
+  "still": { eyebrow:"Aquariums, plants & quiet equipment", h1a:"Less", h1b:"noise.", h1c:"More", h1d:"tide." },
+  "deep":  { eyebrow:"Hand-picked for the patient hobbyist", h1a:"The", h1b:"deep",   h1c:"end,", h1d:"designed." }
+};
+
+function Bubbles({ show, intensity }) {
+  if (!show) return null;
+  const count = intensity === "still" ? 12 : intensity === "calm" ? 22 : 36;
+  const speed = intensity === "still" ? 28 : intensity === "calm" ? 18 : 11;
+  const bubbles = useMemo(() => Array.from({ length: count }, () => ({
+    left: Math.random() * 100,
+    size: 4 + Math.random() * 14,
+    delay: Math.random() * speed,
+    duration: speed + Math.random() * 12,
+    drift: (Math.random() - 0.5) * 80,
+    opacity: 0.3 + Math.random() * 0.5
+  })), [count, speed]);
+  return (
+    <div className="bubbles" aria-hidden="true">
+      {bubbles.map((b, i) => (
+        <span key={i} className="bubble" style={{
+          left: b.left + "%", width: b.size + "px", height: b.size + "px",
+          animationDelay: -b.delay + "s", animationDuration: b.duration + "s",
+          opacity: b.opacity, "--drift": b.drift + "px"
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function HeroTank() {
+  return (
+    <div className="hero-tank">
+      <div className="hero-tank-tag"><span className="pulse" /> Featured · Live preview</div>
+
+      <svg className="fish fish-a" viewBox="0 0 80 30">
+        <path d="M68 15 Q72 5 60 5 Q44 5 28 9 Q14 11 14 15 Q14 19 28 21 Q44 25 60 25 Q72 25 68 15 Z" fill="rgba(233,163,115,.9)" />
+        <path d="M14 15 L2 6 L6 15 L2 24 Z" fill="rgba(233,163,115,.78)" />
+        <path d="M52 6 Q58 1 64 5 Z" fill="rgba(233,163,115,.7)" />
+        <path d="M52 17 Q48 22 44 19 Z" fill="rgba(233,163,115,.65)" />
+        <circle cx="64" cy="13" r="1.4" fill="#0a1a36" />
+        <circle cx="64.4" cy="12.6" r=".4" fill="#fff" opacity=".8" />
+      </svg>
+      <svg className="fish fish-b" viewBox="0 0 60 22">
+        <path d="M50 11 Q53 3 44 3 Q32 3 20 6 Q10 8 10 11 Q10 14 20 16 Q32 19 44 19 Q53 19 50 11 Z" fill="rgba(184,214,232,.95)" />
+        <path d="M10 11 L1 4 L4 11 L1 18 Z" fill="rgba(184,214,232,.8)" />
+        <path d="M38 4 Q42 0 46 4 Z" fill="rgba(184,214,232,.7)" />
+        <path d="M38 13 Q35 17 32 14 Z" fill="rgba(184,214,232,.65)" />
+        <circle cx="47" cy="9" r="1.1" fill="#0a1a36" />
+        <circle cx="47.3" cy="8.7" r=".3" fill="#fff" opacity=".8" />
+      </svg>
+      <svg className="fish fish-c" viewBox="0 0 50 18">
+        <path d="M42 9 Q44 2 37 2 Q26 2 16 5 Q8 7 8 9 Q8 11 16 13 Q26 16 37 16 Q44 16 42 9 Z" fill="rgba(216,201,163,.75)" />
+        <path d="M8 9 L1 3 L3 9 L1 15 Z" fill="rgba(216,201,163,.65)" />
+        <path d="M32 3 Q35 0 38 3 Z" fill="rgba(216,201,163,.6)" />
+        <circle cx="39" cy="7" r="1" fill="#0a1a36" />
+      </svg>
+
+      <div className="tank-sand" />
+
+      <div className="plant plant-1">
+        <svg viewBox="0 0 40 100" preserveAspectRatio="none">
+          <path d="M20 100 Q12 70 16 40 Q20 50 24 40 Q28 70 20 100" fill="rgba(46,107,95,.85)" />
+          <path d="M20 100 Q8 80 6 60" stroke="rgba(46,107,95,.7)" strokeWidth="2" fill="none" />
+          <path d="M20 100 Q32 80 34 60" stroke="rgba(46,107,95,.7)" strokeWidth="2" fill="none" />
+        </svg>
+      </div>
+      <div className="plant plant-2">
+        <svg viewBox="0 0 40 100" preserveAspectRatio="none">
+          <path d="M20 100 Q14 60 20 20 Q26 60 20 100" fill="rgba(46,107,95,.7)" />
+          <path d="M20 100 Q10 70 12 50" stroke="rgba(46,107,95,.6)" strokeWidth="2" fill="none" />
+          <path d="M20 100 Q30 70 28 50" stroke="rgba(46,107,95,.6)" strokeWidth="2" fill="none" />
+        </svg>
+      </div>
+      <div className="plant plant-3">
+        <svg viewBox="0 0 40 100" preserveAspectRatio="none">
+          <path d="M20 100 L20 30" stroke="rgba(46,107,95,.8)" strokeWidth="3" fill="none" />
+          <path d="M20 80 Q10 70 8 60 M20 65 Q30 55 32 45 M20 50 Q10 40 8 30 M20 35 Q30 25 32 18" stroke="rgba(46,107,95,.75)" strokeWidth="2" fill="none" />
+        </svg>
+      </div>
+
+      <div className="hero-tank-price">
+        <div>
+          <div className="name">The Deepwater 90L</div>
+          <div className="meta">Living centerpiece · 12-city install</div>
+        </div>
+        <div className="price">$1,240</div>
+      </div>
+    </div>
+  );
+}
+
+function useCart() {
+  const [items, setItems] = useState([]);
+  const [open, setOpen] = useState(false);
+  const add = (product, qty = 1) => {
+    setItems(prev => {
+      const found = prev.find(i => i.id === product.id);
+      if (found) return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + qty } : i);
+      return [...prev, { ...product, qty }];
+    });
+  };
+  const remove = (id) => setItems(prev => prev.filter(i => i.id !== id));
+  const setQty = (id, qty) => { if (qty <= 0) return remove(id); setItems(prev => prev.map(i => i.id === id ? { ...i, qty } : i)); };
+  const clear = () => setItems([]);
+  const count = items.reduce((s, i) => s + i.qty, 0);
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  return { items, open, setOpen, add, remove, setQty, clear, count, subtotal };
+}
+
+function CartDrawer({ cart, onCheckout }) {
+  const shipping = cart.subtotal > 0 ? (cart.subtotal > 500 ? 0 : 18) : 0;
+  const total = cart.subtotal + shipping;
+  return (
+    <>
+      <div className={"cart-overlay" + (cart.open ? " open" : "")} onClick={() => cart.setOpen(false)} />
+      <aside className={"cart-drawer" + (cart.open ? " open" : "")} aria-hidden={!cart.open}>
+        <div className="cart-hd">
+          <h3>Your tank<small>{cart.count} {cart.count === 1 ? "item" : "items"}</small></h3>
+          <button className="cart-close" onClick={() => cart.setOpen(false)} aria-label="Close cart"><Glyph name="x" /></button>
+        </div>
+        <div className="cart-body">
+          {cart.items.length === 0 ? (
+            <div className="cart-empty">
+              <svg width="64" height="64" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1" opacity=".5">
+                <rect x="14" y="22" width="72" height="56" rx="2" />
+                <path d="M14 64 Q35 60 50 64 T86 64" />
+              </svg>
+              <h4>Empty waters.</h4>
+              <p>Start with a tank, a setup, or a single plant. Everything we sell is meant to last.</p>
+            </div>
+          ) : cart.items.map(item => (
+            <div className="cart-item" key={item.id}>
+              <div className="cart-item-img"><Glyph name={item.glyph || "tank"} /></div>
+              <div>
+                <div className="cart-item-name">{item.name}</div>
+                <div className="cart-item-meta">{item.meta}</div>
+                <div className="cart-item-qty">
+                  <button onClick={() => cart.setQty(item.id, item.qty - 1)}><Glyph name="minus" /></button>
+                  <span>{item.qty}</span>
+                  <button onClick={() => cart.setQty(item.id, item.qty + 1)}><Glyph name="plus" /></button>
+                </div>
+              </div>
+              <div className="cart-item-right">
+                <div className="cart-item-price">${(item.price * item.qty).toLocaleString()}</div>
+                <button className="cart-item-remove" onClick={() => cart.remove(item.id)}>Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {cart.items.length > 0 && (
+          <div className="cart-foot">
+            <div className="cart-row"><span>Subtotal</span><span>${cart.subtotal.toLocaleString()}</span></div>
+            <div className="cart-row">
+              <span>Shipping {shipping === 0 && <em style={{color:"var(--coral)",fontStyle:"normal",fontSize:11,letterSpacing:".1em",textTransform:"uppercase",marginLeft:6}}>free</em>}</span>
+              <span>{shipping === 0 ? "—" : "$" + shipping}</span>
+            </div>
+            <div className="cart-row tot"><span>Total</span><span className="price">${total.toLocaleString()}</span></div>
+            <button className="cart-checkout" onClick={onCheckout}>Proceed to checkout →</button>
+            <div className="cart-secure">Secure · Insured shipping · 30-day livestock guarantee</div>
+          </div>
+        )}
+      </aside>
+    </>
+  );
+}
+
+function Checkout({ cart, open, onClose }) {
+  const [step, setStep] = useState(0);
+  const total = cart.subtotal + (cart.subtotal > 0 && cart.subtotal <= 500 ? 18 : 0);
+  useEffect(() => { if (open) setStep(0); }, [open]);
+  if (!open) return null;
+  return (
+    <div className={"checkout-veil" + (open ? " open" : "")} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="checkout-card">
+        <button className="checkout-close" onClick={onClose}><Glyph name="x" /></button>
+        <div className="checkout-steps">
+          <span className={step === 0 ? "active" : step > 0 ? "done" : ""}>01 · Address</span>
+          <span className={step === 1 ? "active" : step > 1 ? "done" : ""}>02 · Payment</span>
+          <span className={step === 2 ? "active" : ""}>03 · Confirmed</span>
+        </div>
+
+        {step === 0 && (
+          <>
+            <h3>Where should we <em>send it</em>?</h3>
+            <p className="lead">Tanks ship in custom-cut foam crates. Live plants and fish leave Tuesday after a 48h drip-quarantine.</p>
+            <div className="checkout-grid">
+              <div className="field"><label>First name</label><input placeholder="Eleanor" defaultValue="Eleanor" /></div>
+              <div className="field"><label>Last name</label><input placeholder="Mori" defaultValue="Mori" /></div>
+              <div className="field full"><label>Email</label><input placeholder="you@home.com" defaultValue="eleanor@studio.com" /></div>
+              <div className="field full"><label>Street address</label><input placeholder="148 Sage Lane" defaultValue="148 Sage Lane, Apt 3" /></div>
+              <div className="field"><label>City</label><input defaultValue="Brooklyn" /></div>
+              <div className="field"><label>Postal code</label><input defaultValue="11215" /></div>
+            </div>
+            <div className="checkout-cta">
+              <button className="btn btn-primary" onClick={() => setStep(1)}>Continue <Glyph name="arrow" className="arrow" /></button>
+              <span style={{fontSize:12,color:"var(--shallow)",opacity:.75,letterSpacing:".05em"}}>Free white-glove install over $500</span>
+            </div>
+            <div className="checkout-summary"><span>{cart.count} items · subtotal</span><span className="price">${total.toLocaleString()}</span></div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <h3>One last <em>detail</em>.</h3>
+            <p className="lead">Encrypted. We never store card numbers. Buy now, pay over 12 months at 0% on bundles over $500.</p>
+            <div className="checkout-grid">
+              <div className="field full"><label>Card number</label><input placeholder="0000 0000 0000 0000" defaultValue="4242 4242 4242 4242" /></div>
+              <div className="field"><label>Expiry</label><input placeholder="MM / YY" defaultValue="04 / 28" /></div>
+              <div className="field"><label>CVC</label><input placeholder="•••" defaultValue="•••" /></div>
+              <div className="field full"><label>Name on card</label><input defaultValue="Eleanor Mori" /></div>
+            </div>
+            <div className="checkout-cta">
+              <button className="btn btn-ghost" onClick={() => setStep(0)}>Back</button>
+              <button className="btn btn-primary" onClick={() => setStep(2)}>Place order <Glyph name="arrow" className="arrow" /></button>
+            </div>
+            <div className="checkout-summary"><span>Total due now</span><span className="price">${total.toLocaleString()}</span></div>
+          </>
+        )}
+
+        {step === 2 && (
+          <div style={{textAlign:"center",padding:"20px 0 8px"}}>
+            <div className="confirm-icn"><Glyph name="check" /></div>
+            <h3>Your tank is <em>on its way</em>.</h3>
+            <p className="lead" style={{maxWidth:480,margin:"12px auto 0"}}>
+              Order #AV-{Math.floor(Math.random() * 90000 + 10000)} confirmed. We'll email you a setup schedule and the name of your dedicated specialist.
+            </p>
+            <div style={{display:"flex",gap:40,justifyContent:"center",marginTop:36,fontSize:13}}>
+              <div><div style={{fontFamily:"var(--serif)",fontSize:22,color:"var(--ivory)"}}>Tue, Jun 2</div><div style={{color:"var(--shallow)",fontSize:11,letterSpacing:".15em",textTransform:"uppercase",marginTop:4}}>Estimated arrival</div></div>
+              <div><div style={{fontFamily:"var(--serif)",fontSize:22,color:"var(--ivory)"}}>${total.toLocaleString()}</div><div style={{color:"var(--shallow)",fontSize:11,letterSpacing:".15em",textTransform:"uppercase",marginTop:4}}>Charged</div></div>
+              <div><div style={{fontFamily:"var(--serif)",fontSize:22,color:"var(--ivory)"}}>Marcus L.</div><div style={{color:"var(--shallow)",fontSize:11,letterSpacing:".15em",textTransform:"uppercase",marginTop:4}}>Your specialist</div></div>
+            </div>
+            <div style={{marginTop:36}}>
+              <button className="btn btn-primary" onClick={() => { cart.clear(); onClose(); }}>Continue browsing</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({ product, onAdd }) {
+  const [added, setAdded] = useState(false);
+  const handle = (e) => {
+    e.stopPropagation();
+    onAdd(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+  return (
+    <div className="product">
+      <div className="product-img">
+        {product.badge === "new"  && <div className="product-badge new">New</div>}
+        {product.badge === "live" && <div className="product-badge live"><span style={{display:"inline-flex",alignItems:"center",gap:6}}><span className="live-dot" style={{background:"var(--ivory)"}} />Live</span></div>}
+        <div className="product-glyph"><Glyph name={product.glyph} /></div>
+        <button className={"product-add" + (added ? " added" : "")} onClick={handle} aria-label={`Add ${product.name} to cart`}>
+          {added ? <Glyph name="check" /> : <Glyph name="plus" />}
+        </button>
+      </div>
+      <div className="product-info">
+        <div>
+          <div className="product-name">{product.name}</div>
+          <div className="product-meta">{product.meta}</div>
+        </div>
+        <div className="product-price">${product.price}</div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const cart = useCart();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [filter, setFilter] = useState("all");
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const key = t.palette[0].replace("#", "");
+    const p = PALETTES[key] || PALETTES["030814"];
+    const root = document.documentElement.style;
+    Object.entries(p).forEach(([k, v]) => root.setProperty(`--${k}`, v));
+  }, [t.palette]);
+
+  const handleAdd = (product) => {
+    cart.add(product);
+    setToast(`${product.name} added`);
+    setTimeout(() => setToast(null), 1800);
+  };
+
+  const tagline = TAGLINES[t.tagline] || TAGLINES.lent;
+  const filteredProducts = filter === "all"
+    ? window.CATALOG.products
+    : window.CATALOG.products.filter(p => p.cat === filter);
+
+  const filters = [
+    { id: "all", label: "All" }, { id: "tanks", label: "Tanks" }, { id: "plants", label: "Plants" },
+    { id: "equipment", label: "Equipment" }, { id: "fish", label: "Fish" }, { id: "food", label: "Food" }
+  ];
+
+  return (
+    <>
+      <div className="ocean-bg" />
+      <div className="caustics" />
+      <Bubbles show={t.showBubbles} intensity={t.motion} />
+      <div className="grain" />
+
+      <div className="page">
+        <nav className="nav">
+          <a className="brand" href="#">
+            <span className="dot" />
+            <span>aquarium <em>vibe</em></span>
+            <small>est. mmxix</small>
+          </a>
+          <div className="nav-links">
+            <a href="#shop">Shop</a>
+            <a href="#setups">Setups</a>
+            <a href="#fish">Live fish</a>
+            <a href="#care">Care</a>
+            <a href="#journal">Journal</a>
+          </div>
+          <div className="nav-tools">
+            <a href="#account" style={{opacity:.7}}>Account</a>
+            <button className="cart-btn" onClick={() => cart.setOpen(true)}>
+              <Glyph name="bag" />
+              <span>Cart</span>
+              {cart.count > 0 && <span className="cart-count">{cart.count}</span>}
+            </button>
+          </div>
+        </nav>
+
+        <header className="hero">
+          <div>
+            <div className="hero-eyebrow">{tagline.eyebrow}</div>
+            <h1>
+              <span className="thin">{tagline.h1a}</span> <em>{tagline.h1b}</em><br />
+              {tagline.h1c} <span className="thin">{tagline.h1d}</span>
+            </h1>
+            <p className="hero-sub">
+              We make aquariums for the people who actually look at them. Hand-finished glass, quietly engineered equipment, and a small number of fish kept in better conditions than most pet shops dream of.
+            </p>
+            <div className="hero-cta-row">
+              <a href="#setups" className="btn btn-primary">Shop complete setups <Glyph name="arrow" className="arrow" /></a>
+              <a href="#shop" className="btn btn-ghost">Browse the catalog</a>
+            </div>
+            <div className="hero-stats">
+              <div className="stat"><div className="num">2,840</div><div className="lbl">Tanks shipped</div></div>
+              <div className="stat"><div className="num">47</div><div className="lbl">Species in care</div></div>
+              <div className="stat"><div className="num">12yr</div><div className="lbl">Of practice</div></div>
+            </div>
+          </div>
+          <HeroTank />
+        </header>
+
+        <div className="ticker">
+          <div className="ticker-track">
+            <span>Free white-glove install over $500 <em className="sep">◇</em> 30-day livestock guarantee <em className="sep">◇</em> Captive-bred &amp; quarantine-cleared <em className="sep">◇</em> Tissue-cultured plants only <em className="sep">◇</em> 0% finance on bundles <em className="sep">◇</em></span>
+            <span>Free white-glove install over $500 <em className="sep">◇</em> 30-day livestock guarantee <em className="sep">◇</em> Captive-bred &amp; quarantine-cleared <em className="sep">◇</em> Tissue-cultured plants only <em className="sep">◇</em> 0% finance on bundles <em className="sep">◇</em></span>
+          </div>
+        </div>
+
+        <section className="section" id="shop">
+          <div className="section-head">
+            <div>
+              <div className="section-eyebrow">The Collection</div>
+              <h2>Six rooms,<br/>one <em>quiet</em> shop.</h2>
+            </div>
+            <p className="desc">From a 30-litre cube to a 200-litre reef — every category is curated by hobbyists, not buyers. If we wouldn't keep it ourselves, we don't stock it.</p>
+          </div>
+          <div className="cat-grid">
+            {window.CATALOG.categories.map(c => (
+              <div className="cat-card" key={c.id} onClick={() => setFilter(c.id === "setups" ? "all" : c.id)}>
+                <div className="cat-card-glyph"><Glyph name={c.glyph} /></div>
+                <div className="cat-card-info">
+                  <div className="cat-card-num">{c.num}</div>
+                  <div className="cat-card-name">{c.name}</div>
+                  <div className="cat-card-meta">{c.meta}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="section" id="setups">
+          <div className="section-head">
+            <div>
+              <div className="section-eyebrow">Complete Setups</div>
+              <h2>Three boxes.<br/>Three <em>kinds</em> of patience.</h2>
+            </div>
+            <p className="desc">Pre-tested systems with everything — glass, filter, light, substrate, plants — drop-shipped together. Skip the spreadsheet of compatibilities.</p>
+          </div>
+          <div className="bundles">
+            {window.CATALOG.bundles.map(b => (
+              <div className={"bundle" + (b.featured ? " featured" : "")} key={b.id}>
+                <div className="bundle-tag">{b.tag} {b.featured && <span style={{marginLeft:8,color:"var(--ivory)"}}>· Most chosen</span>}</div>
+                <div className="bundle-name">{b.name}</div>
+                <div className="bundle-tagline">{b.tagline}</div>
+                <ul className="bundle-inc">
+                  {b.includes.map((inc, idx) => <li key={idx}>{inc}</li>)}
+                </ul>
+                <div className="bundle-foot">
+                  <div><div className="price">${b.price.toLocaleString()}<small>or ${b.monthly}/mo</small></div></div>
+                  <button className="btn btn-primary" style={{padding:"12px 20px"}} onClick={() => handleAdd({ id: b.id, name: b.name, meta: b.tag, price: b.price, glyph: "setup" })}>
+                    Add <Glyph name="arrow" className="arrow" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="section" id="fish">
+          <div className="section-head">
+            <div>
+              <div className="section-eyebrow">New This Tide</div>
+              <h2>Pieces we'd <em>keep</em> ourselves.</h2>
+            </div>
+            <div className="chips">
+              {filters.map(f => (
+                <button key={f.id} className={"chip" + (filter === f.id ? " active" : "")} onClick={() => setFilter(f.id)}>{f.label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="products">
+            {filteredProducts.map(p => <ProductCard key={p.id} product={p} onAdd={handleAdd} />)}
+          </div>
+        </section>
+
+        <section style={{padding:"40px 48px",maxWidth:1440,margin:"0 auto"}} id="care">
+          <div className="section-head" style={{marginBottom:40}}>
+            <div>
+              <div className="section-eyebrow">Our Practice</div>
+              <h2>Four things we <em>won't</em> skip.</h2>
+            </div>
+          </div>
+          <div className="care-strip">
+            <div>
+              <div className="num">01 / Quarantine</div>
+              <div className="ttl">Six weeks of observation.</div>
+              <div className="sub">No fish leaves our facility until it's eaten on its own for forty days. Every animal arrives healthy or you keep your money.</div>
+            </div>
+            <div>
+              <div className="num">02 / Source</div>
+              <div className="ttl">Captive-bred wherever possible.</div>
+              <div className="sub">We work with eleven small breeders we visit each year. Wild-caught is the rare exception, never the default.</div>
+            </div>
+            <div>
+              <div className="num">03 / Install</div>
+              <div className="ttl">A real person, on your floor.</div>
+              <div className="sub">Bundles over $500 ship with a two-hour install in twelve cities. We level the cabinet, cycle the filter, and stay until it hums.</div>
+            </div>
+            <div>
+              <div className="num">04 / After</div>
+              <div className="ttl">A specialist on text.</div>
+              <div className="sub">Every order is paired with one of our keepers. Water cloudy? Algae creeping? Text. We answer within the day, every day.</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="newsletter">
+          <h2>Letters from the <em>deep end</em>.</h2>
+          <p>One short note a month. Aquascaping ideas, new arrivals, the occasional fish biography. No noise.</p>
+          <form className="news-form" onSubmit={(e) => { e.preventDefault(); setToast("Subscribed"); setTimeout(() => setToast(null), 1800); }}>
+            <input type="email" placeholder="your@email.com" required />
+            <button type="submit">Subscribe</button>
+          </form>
+        </section>
+
+        <footer className="foot">
+          <div className="foot-grid">
+            <div>
+              <div className="foot-tag">aquarium <em style={{fontStyle:"italic"}}>vibe</em><span className="dot">.</span></div>
+              <p style={{marginTop:18,fontSize:14,color:"var(--foam)",opacity:.75,maxWidth:320,lineHeight:1.6}}>
+                A small shop for slow water. Brooklyn, Lisbon, and a quarantine facility in upstate New York.
+              </p>
+            </div>
+            <div>
+              <h4>Shop</h4>
+              <ul>
+                <li><a href="#">Tanks</a></li>
+                <li><a href="#">Complete setups</a></li>
+                <li><a href="#">Plants &amp; decor</a></li>
+                <li><a href="#">Live fish</a></li>
+                <li><a href="#">Equipment</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4>Care</h4>
+              <ul>
+                <li><a href="#">Setup guide</a></li>
+                <li><a href="#">Water chemistry</a></li>
+                <li><a href="#">Aquascaping</a></li>
+                <li><a href="#">Talk to a keeper</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4>House</h4>
+              <ul>
+                <li><a href="#">Studio</a></li>
+                <li><a href="#">Journal</a></li>
+                <li><a href="#">Shipping</a></li>
+                <li><a href="#">Press</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="foot-meta">
+            <span>© 2026 Aquarium Vibe, Inc.</span>
+            <span>Made slowly, in Brooklyn.</span>
+            <span>Privacy · Terms</span>
+          </div>
+        </footer>
+      </div>
+
+      <CartDrawer cart={cart} onCheckout={() => { cart.setOpen(false); setCheckoutOpen(true); }} />
+      <Checkout cart={cart} open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
+
+      <div className={"toast" + (toast ? " show" : "")}>
+        <Glyph name="check" />
+        <span>{toast}</span>
+      </div>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Palette" />
+        <TweakColor label="Theme" value={t.palette}
+          options={[["#030814","#e9a373","#f6f1e4"],["#0c1d18","#d8c2a0","#efe8d6"],["#1a0e1f","#e89bd4","#f4e8ed"],["#f4eee2","#c66d3f","#1a1410"]]}
+          onChange={(v) => setTweak("palette", v)} />
+        <TweakSection label="Atmosphere" />
+        <TweakRadio label="Motion" value={t.motion} options={["still","calm","active"]} onChange={(v) => setTweak("motion", v)} />
+        <TweakToggle label="Bubbles" value={t.showBubbles} onChange={(v) => setTweak("showBubbles", v)} />
+        <TweakSection label="Copywriting" />
+        <TweakSelect label="Headline" value={t.tagline}
+          options={[{value:"lent",label:"Slow water, kept well."},{value:"drift",label:"A room with a current."},{value:"still",label:"Less noise. More tide."},{value:"deep",label:"The deep end, designed."}]}
+          onChange={(v) => setTweak("tagline", v)} />
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
