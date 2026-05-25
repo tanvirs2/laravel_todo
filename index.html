@@ -112,6 +112,55 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .promo-lbl{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ivory)}
 .promo-sub{font-size:11px;color:var(--shallow);letter-spacing:.06em;margin-top:3px}
 
+/* ── Style Spotlight ── */
+.spotlight-section{padding:96px 48px;max-width:1440px;margin:0 auto;display:grid;
+  grid-template-columns:1.15fr 1fr;gap:72px;align-items:center;
+  border-bottom:.5px solid rgba(184,214,232,.07)}
+.spotlight-art{position:relative;aspect-ratio:5/4;width:100%;
+  background:radial-gradient(ellipse at 50% 55%,#0c1830 0%,#040912 75%);
+  border-radius:2px;overflow:hidden;border:.5px solid rgba(184,214,232,.06);
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.6), inset 0 0 80px rgba(0,0,0,.4)}
+.spotlight-art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.spotlight-watermark{position:absolute;left:24px;bottom:18px;font-family:var(--sans);
+  font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:rgba(184,214,232,.32);z-index:2}
+.spotlight-tag{display:inline-flex;align-items:center;gap:14px;font-family:var(--sans);
+  font-size:11px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--coral);margin-bottom:28px}
+.spotlight-tag::before{content:"";width:32px;height:1px;background:var(--coral)}
+.spotlight-head{font-family:var(--serif);font-size:clamp(40px,5.2vw,68px);font-weight:600;
+  line-height:1.02;letter-spacing:-.015em;color:var(--ivory);margin:0 0 28px}
+.spotlight-head em{font-style:italic;color:var(--coral);font-weight:500}
+.spotlight-body{font-size:15px;line-height:1.7;color:var(--foam);opacity:.82;max-width:480px;margin:0 0 36px}
+.spotlight-credits{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 32px;
+  padding-top:30px;border-top:.5px solid rgba(184,214,232,.1);max-width:480px}
+.spotlight-credit-lbl{font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--shallow);margin-bottom:6px;opacity:.85}
+.spotlight-credit-val{font-family:var(--serif);font-size:19px;color:var(--ivory);font-style:italic;font-weight:500}
+.spotlight-cta{display:inline-flex;align-items:center;gap:14px;margin-top:38px;
+  font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--coral);cursor:pointer;background:transparent;
+  border:none;padding:0;transition:gap .25s ease}
+.spotlight-cta:hover{gap:20px}
+.spotlight-cta-arrow{width:34px;height:1px;background:var(--coral);transition:width .25s ease}
+.spotlight-cta:hover .spotlight-cta-arrow{width:46px}
+
+@keyframes sp-beam{0%,100%{opacity:.62}50%{opacity:.92}}
+@keyframes sp-fish-r{0%,100%{transform:translateX(0)}50%{transform:translateX(18px)}}
+@keyframes sp-fish-l{0%,100%{transform:translateX(0)}50%{transform:translateX(-18px)}}
+@keyframes sp-bub{0%{transform:translateY(0);opacity:.6}100%{transform:translateY(-180px);opacity:0}}
+.sp-beam-l{animation:sp-beam 4.2s ease-in-out infinite}
+.sp-beam-r{animation:sp-beam 4.2s ease-in-out infinite;animation-delay:-2.1s}
+.sp-fish-a{transform-box:fill-box;transform-origin:center;animation:sp-fish-r 5.4s ease-in-out infinite}
+.sp-fish-b{transform-box:fill-box;transform-origin:center;animation:sp-fish-l 6.2s ease-in-out infinite;animation-delay:-1.4s}
+.sp-fish-c{transform-box:fill-box;transform-origin:center;animation:sp-fish-r 4.9s ease-in-out infinite;animation-delay:-2.6s}
+.sp-bub{transform-box:fill-box;animation:sp-bub 5s linear infinite}
+.sp-bub-2{animation-delay:-1.7s}
+.sp-bub-3{animation-delay:-3.3s}
+
+@media (max-width:900px){
+  .spotlight-section{grid-template-columns:1fr;gap:44px;padding:64px 22px}
+  .spotlight-credits{grid-template-columns:1fr 1fr;gap:18px}
+}
+
 /* ── Shop Sections ── */
 .shop-section{padding:72px 48px;max-width:1440px;margin:0 auto}
 .shop-section+.shop-section{border-top:.5px solid rgba(184,214,232,.07)}
@@ -586,6 +635,168 @@ function PromoStrip() {
   );
 }
 
+// ── Style Spotlight ──────────────────────────────────────────────────
+function StyleSpotlight() {
+  return (
+    <section className="spotlight-section">
+      <div className="spotlight-art">
+        <svg viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="sp-beam1" x1="0.5" y1="0" x2="0.5" y2="1">
+              <stop offset="0%" stopColor="#fff4c8" stopOpacity="0.38"/>
+              <stop offset="55%" stopColor="#fff4c8" stopOpacity="0.10"/>
+              <stop offset="100%" stopColor="#fff4c8" stopOpacity="0"/>
+            </linearGradient>
+            <linearGradient id="sp-water" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(46,82,124,0.28)"/>
+              <stop offset="100%" stopColor="rgba(10,22,42,0.55)"/>
+            </linearGradient>
+            <radialGradient id="sp-glow-l" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stopColor="#fff8dc" stopOpacity="1"/>
+              <stop offset="60%" stopColor="#fff4c8" stopOpacity="0.5"/>
+              <stop offset="100%" stopColor="#fff4c8" stopOpacity="0"/>
+            </radialGradient>
+          </defs>
+
+          {/* Spotlight arms */}
+          <path d="M280 0 L280 280" stroke="#181d28" strokeWidth="6" fill="none" strokeLinecap="round"/>
+          <path d="M720 0 L720 280" stroke="#181d28" strokeWidth="6" fill="none" strokeLinecap="round"/>
+
+          {/* Lamp housings */}
+          <ellipse cx="280" cy="288" rx="34" ry="18" fill="#0f131b"/>
+          <ellipse cx="720" cy="288" rx="34" ry="18" fill="#0f131b"/>
+
+          {/* Bulb glows */}
+          <circle cx="280" cy="298" r="22" fill="url(#sp-glow-l)"/>
+          <circle cx="280" cy="298" r="10" fill="#fff8dc"/>
+          <circle cx="720" cy="298" r="22" fill="url(#sp-glow-l)"/>
+          <circle cx="720" cy="298" r="10" fill="#fff8dc"/>
+
+          {/* Light beams */}
+          <g className="sp-beam-l"><path d="M258 308 L185 720 L375 720 L302 308 Z" fill="url(#sp-beam1)"/></g>
+          <g className="sp-beam-r"><path d="M698 308 L625 720 L815 720 L742 308 Z" fill="url(#sp-beam1)"/></g>
+
+          {/* Tank water body */}
+          <rect x="120" y="410" width="760" height="290" fill="url(#sp-water)"/>
+          <rect x="120" y="410" width="760" height="290" fill="none" stroke="rgba(184,214,232,0.22)" strokeWidth="1.5"/>
+          {/* Surface ripple */}
+          <rect x="123" y="413" width="754" height="6" fill="rgba(255,247,220,0.08)"/>
+          <path d="M125 418 Q260 414 410 419 T875 418" stroke="rgba(255,247,220,0.18)" strokeWidth="0.8" fill="none"/>
+
+          {/* Bubbles */}
+          <circle className="sp-bub" cx="200" cy="650" r="2.5" fill="rgba(184,214,232,0.6)"/>
+          <circle className="sp-bub sp-bub-2" cx="208" cy="650" r="1.8" fill="rgba(184,214,232,0.5)"/>
+          <circle className="sp-bub sp-bub-3" cx="195" cy="650" r="2.2" fill="rgba(184,214,232,0.55)"/>
+
+          {/* Driftwood main mass */}
+          <path d="M285 660 Q300 580 360 555 Q420 540 470 500 Q520 460 580 470 Q650 482 700 555 Q740 615 725 660 Z"
+                fill="#1a0e08" stroke="#2a1810" strokeWidth="0.8"/>
+          {/* Driftwood branches */}
+          <path d="M360 555 Q380 480 420 470 Q450 466 470 500" stroke="#2a1810" strokeWidth="9" fill="none" strokeLinecap="round"/>
+          <path d="M420 470 Q415 420 445 405" stroke="#2a1810" strokeWidth="6" fill="none" strokeLinecap="round"/>
+          <path d="M520 480 Q555 425 585 445" stroke="#2a1810" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <path d="M585 445 Q605 420 625 430" stroke="#2a1810" strokeWidth="5" fill="none" strokeLinecap="round"/>
+          <path d="M640 488 Q670 440 700 470" stroke="#2a1810" strokeWidth="7" fill="none" strokeLinecap="round"/>
+          <path d="M700 470 Q720 458 735 472" stroke="#2a1810" strokeWidth="4" fill="none" strokeLinecap="round"/>
+          {/* Highlight on driftwood (spotlight catching) */}
+          <path d="M470 500 Q500 478 540 478" stroke="rgba(255,232,178,0.22)" strokeWidth="3" fill="none" strokeLinecap="round"/>
+          <path d="M580 470 Q610 458 640 478" stroke="rgba(255,232,178,0.18)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+
+          {/* Stones */}
+          <ellipse cx="240" cy="665" rx="58" ry="20" fill="#5c4d36"/>
+          <ellipse cx="230" cy="660" rx="40" ry="12" fill="#766445" opacity=".7"/>
+          <ellipse cx="780" cy="660" rx="52" ry="18" fill="#5c4d36"/>
+          <ellipse cx="788" cy="656" rx="32" ry="10" fill="#766445" opacity=".7"/>
+          <ellipse cx="500" cy="668" rx="36" ry="12" fill="#6b5942"/>
+
+          {/* Plant tuft above water on rim (like the flower in photo) */}
+          <g transform="translate(218 405)">
+            <circle cx="0" cy="-2" r="7" fill="#4d6b3d"/>
+            <circle cx="-7" cy="-5" r="5" fill="#5f8049"/>
+            <circle cx="7" cy="-6" r="6" fill="#5f8049"/>
+            <circle cx="0" cy="-11" r="4.5" fill="#6f9354"/>
+            <circle cx="-4" cy="-13" r="3" fill="#f6f1e4" opacity=".85"/>
+            <circle cx="5" cy="-15" r="2.6" fill="#f6f1e4" opacity=".85"/>
+            <circle cx="0" cy="-18" r="2.4" fill="#f6f1e4" opacity=".85"/>
+          </g>
+
+          {/* Sand floor */}
+          <ellipse cx="500" cy="695" rx="385" ry="14" fill="#c9b88a" opacity=".92"/>
+          <rect x="120" y="690" width="760" height="10" fill="#a89770" opacity=".55"/>
+          {/* Gravel speckles */}
+          <circle cx="320" cy="694" r="2" fill="#8a7656" opacity=".7"/>
+          <circle cx="420" cy="697" r="1.5" fill="#8a7656" opacity=".6"/>
+          <circle cx="560" cy="695" r="1.8" fill="#8a7656" opacity=".7"/>
+          <circle cx="660" cy="697" r="1.4" fill="#8a7656" opacity=".6"/>
+
+          {/* Fish (cherry barbs / orange tetras) */}
+          <g className="sp-fish-a">
+            <ellipse cx="370" cy="500" rx="12" ry="4.2" fill="#e9a373"/>
+            <path d="M358 500 L350 496 L350 504 Z" fill="#e9a373"/>
+            <circle cx="376" cy="499" r="1" fill="#1a0e08"/>
+          </g>
+          <g className="sp-fish-b">
+            <ellipse cx="610" cy="555" rx="12" ry="4.2" fill="#e08560"/>
+            <path d="M622 555 L630 551 L630 559 Z" fill="#e08560"/>
+            <circle cx="603" cy="554" r="1" fill="#1a0e08"/>
+          </g>
+          <g className="sp-fish-c">
+            <ellipse cx="455" cy="600" rx="10" ry="3.6" fill="#e9a373"/>
+            <path d="M445 600 L438 597 L438 603 Z" fill="#e9a373"/>
+            <circle cx="460" cy="599" r="0.9" fill="#1a0e08"/>
+          </g>
+          <g className="sp-fish-a" style={{animationDelay:"-3.4s"}}>
+            <ellipse cx="690" cy="620" rx="9" ry="3.4" fill="#d97956"/>
+            <path d="M681 620 L675 617 L675 623 Z" fill="#d97956"/>
+          </g>
+
+          {/* Wooden stand */}
+          <rect x="110" y="700" width="780" height="58" fill="#1a0d06"/>
+          <rect x="110" y="700" width="780" height="5" fill="#2d1810"/>
+          <rect x="110" y="753" width="780" height="5" fill="#0a0503"/>
+          {/* Stand legs */}
+          <rect x="130" y="758" width="16" height="38" fill="#0a0503"/>
+          <rect x="854" y="758" width="16" height="38" fill="#0a0503"/>
+        </svg>
+        <div className="spotlight-watermark">Tank 02 · Manzanita Build</div>
+      </div>
+
+      <div className="spotlight-text">
+        <div className="spotlight-tag">Style Spotlight</div>
+        <h2 className="spotlight-head">Hardscape <em>as the hero.</em></h2>
+        <p className="spotlight-body">
+          Twin spotlights, a single piece of Manzanita driftwood, and water dark
+          enough to read as ink — this is what we mean by editorial aquascaping.
+          The fish become accents. The wood becomes architecture. Your living
+          room becomes a gallery.
+        </p>
+        <div className="spotlight-credits">
+          <div>
+            <div className="spotlight-credit-lbl">Hardscape</div>
+            <div className="spotlight-credit-val">Manzanita · 55 cm</div>
+          </div>
+          <div>
+            <div className="spotlight-credit-lbl">Lighting</div>
+            <div className="spotlight-credit-val">Twin LED Spots</div>
+          </div>
+          <div>
+            <div className="spotlight-credit-lbl">Substrate</div>
+            <div className="spotlight-credit-val">River sand + stone</div>
+          </div>
+          <div>
+            <div className="spotlight-credit-lbl">Stock</div>
+            <div className="spotlight-credit-val">8 × Cherry Barb</div>
+          </div>
+        </div>
+        <button className="spotlight-cta" onClick={()=>document.getElementById("new-arrival")?.scrollIntoView({behavior:"smooth"})}>
+          Shop this look
+          <span className="spotlight-cta-arrow"/>
+        </button>
+      </div>
+    </section>
+  );
+}
+
 // ── Cart ─────────────────────────────────────────────────────────────
 function useCart() {
   const [items,setItems]=useState([]);
@@ -859,6 +1070,7 @@ function App() {
 
         <HeroBanner/>
         <PromoStrip/>
+        <StyleSpotlight/>
 
         <ProductSection title="New Arrival"      subtitle="New products just for you"               products={window.CATALOG.newArrivals}  id="new-arrival"  onAdd={handleAdd}/>
         <ProductSection title="Best Selling"     subtitle="Best selling items nominated by you"     products={window.CATALOG.bestSelling}  id="best-selling" onAdd={handleAdd}/>
